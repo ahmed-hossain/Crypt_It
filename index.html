@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EncryptIt Web App</title>
+<style>
+  body { font-family: Arial, sans-serif; }
+  #app { margin: 20px; }
+  input, button { margin: 10px 0; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>Welcome to EncryptIt</h1>
+  <input type="text" id="inputText" placeholder="Enter text">
+  <input type="text" id="inputPassword" placeholder="Enter password">
+  <button onclick="encrypt()">Encrypt</button>
+  <button onclick="decrypt()">Decrypt</button>
+  <p id="output"></p>
+</div>
+
+<script>
+  const chars = ' ' + "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" + "0123456789";
+  
+  function shuffle(array, seed) {
+    let currentIndex = array.length, temporaryValue, randomIndex;
+    let random = new Random(seed);
+    
+    while (0 !== currentIndex) {
+      randomIndex = random.nextInt(currentIndex);
+      currentIndex -= 1;
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+    
+    return array;
+  }
+  
+  function encrypt() {
+    let text = document.getElementById('inputText').value;
+    let password = document.getElementById('inputPassword').value;
+    let encrypted = [];
+    
+    for (let i = 0; i < text.length; i++) {
+      let char = text[i];
+      let index = chars.indexOf(char);
+      let shuffled = shuffle(chars.split(''), password.charCodeAt(i % password.length));
+      encrypted.push(shuffled[index]);
+    }
+    
+    document.getElementById('output').textContent = 'Encrypted message: ' + encrypted.join('');
+  }
+  
+  function decrypt() {
+    let text = document.getElementById('inputText').value;
+    let password = document.getElementById('inputPassword').value;
+    let decrypted = [];
+    
+    for (let i = 0; i < text.length; i++) {
+      let char = text[i];
+      let shuffled = shuffle(chars.split(''), password.charCodeAt(i % password.length));
+      let index = shuffled.indexOf(char);
+      decrypted.push(chars[index]);
+    }
+    
+    document.getElementById('output').textContent = 'Decrypted message: ' + decrypted.join('');
+  }
+  
+  // A simple pseudo-random number generator
+  function Random(seed) {
+    this.seed = seed;
+    this.next = function() {
+      var x = Math.sin(this.seed++) * 10000;
+      return x - Math.floor(x);
+    };
+    this.nextInt = function(max) {
+      return Math.floor(this.next() * max);
+    };
+  }
+</script>
+</body>
+</html>
